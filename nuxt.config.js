@@ -2,7 +2,11 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
+  target: 'static',
   ssr: false,
+  generate: {
+    fallback: true,
+  },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -19,6 +23,11 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script: [
+      {
+        src: 'https://d3js.org/d3.v4.min.js'
+      }
     ]
   },
 
