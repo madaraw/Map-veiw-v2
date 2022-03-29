@@ -1,29 +1,69 @@
 <template>
-  <v-main> 
-    <v-navigation-drawer app permanent>
+  <v-main>
+    <v-navigation-drawer
+      width="25%"
+      color="grey lighten-4"
+      class="drawer"
+      app
+      permanent
+    >
+      <v-list>
+        <v-list-item
+          class="pa-1 px-2"
+          v-for="camera in onlineCamerasSide"
+          :key="camera.id"
+          @mouseenter="focusOnCamera(camera.id)"
+          @mouseleave="unfocusOnCamera(camera.id)"
+        >
+          <v-img :src="camera.thumbnail_url" />
+        </v-list-item>
+      </v-list>
+      <v-list>
+        <v-list-item
+          class="pa-1 px-2"
+          v-for="camera in offlineCamerasSide"
+          :key="camera.id"
+        >
+          <v-img :src="camera.thumbnail_url" />
+        </v-list-item>
+      </v-list>
     </v-navigation-drawer>
-    <div class="map pa-0 ma-0" ref="map"></div>
-    </v-main>
+    <GMap ref="mapComponent" v-if="onlineCameras.length" :onlineCameras="onlineCameras" :offlineCameras="offlineCameras" />
+  </v-main>
 </template>
 
 <script>
-export default {
-  mounted() {
-    let map = null;
-    let center = { lat: 53.3498, lng: -6.2603 };
+import GMap from "../components/GMap.vue"
 
-    // Embedding the map
-    map = new this.$google.maps.Map(this.$refs.map, {
-      zoom: 6,
-      center: center,
-      disableDefaultUI: true,
-    });
+export default {
+  components: {GMap},
+  computed: {
+    onlineCamerasSide() {
+      return this.$store.getters["cameras/GET_SHOWING_ONLINE_CAMS"];
+    },
+    offlineCamerasSide() {
+      return this.$store.getters["cameras/GET_SHOWING_OFFLINE_CAMS"];
+    },
+    onlineCameras() {
+      return this.$store.getters["cameras/GET_ONLINE_CAMS"];
+    },
+    offlineCameras() {
+      return this.$store.getters["cameras/GET_OFFLINE_CAMS"];
+    },
+  },
+  methods:{
+    focusOnCamera(id){
+      this.$refs.mapComponent.focusOnMarker(id)
+    },
+    unfocusOnCamera(id){
+      this.$refs.mapComponent.outOfMarker(id)
+    },
+  },
+  mounted() {
+  },
+
+  beforeCreate() {
+    this.$store.dispatch("cameras/FETCH_CAMERAS");
   },
 };
 </script>
-
-<style>
-.map{
-  height: 100vh;
-}
-</style>
