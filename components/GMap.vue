@@ -33,7 +33,7 @@ export default {
             size: { width: 57, height: 31.5 },
             scaledSize: { width: 57, height: 31.5 },
           });
-          marker.setZIndex(marker.getZIndex() + cameras.length + 1);
+          marker.setZIndex(marker.getZIndex() + ((cameras.length * 2) + 1));
         });
         marker.addListener("mouseout", () => {
           marker.setIcon({
@@ -47,7 +47,7 @@ export default {
               height: 21,
             },
           });
-          marker.setZIndex(marker.getZIndex() - cameras.length + 1);
+          marker.setZIndex(marker.getZIndex() - ((cameras.length * 2) + 1));
         });
         markers.push(marker);
       }

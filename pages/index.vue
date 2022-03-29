@@ -9,7 +9,7 @@
     >
       <v-list>
         <v-list-item
-          class="pa-1 px-2"
+          class="padding-tile"
           v-for="camera in onlineCamerasSide"
           :key="camera.id"
           @mouseenter="focusOnCamera(camera.id)"
@@ -20,7 +20,7 @@
       </v-list>
       <v-list>
         <v-list-item
-          class="pa-1 px-2"
+          class="padding-tile"
           v-for="camera in offlineCamerasSide"
           :key="camera.id"
           @mouseenter="focusOnCamera(camera.id)"
@@ -66,6 +66,16 @@ export default {
 
   beforeCreate() {
     this.$store.dispatch("cameras/FETCH_CAMERAS");
+    this.$store.dispatch("cameras/FETCH_CAMERAS_KEY");
   },
 };
 </script>
+
+<style>
+.padding-tile{
+  padding: 4px 8px;
+}
+.padding-tile:hover{
+  padding: 1px 2px;
+}
+</style>
