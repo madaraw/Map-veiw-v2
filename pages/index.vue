@@ -23,6 +23,8 @@
           class="pa-1 px-2"
           v-for="camera in offlineCamerasSide"
           :key="camera.id"
+          @mouseenter="focusOnCamera(camera.id)"
+          @mouseleave="unfocusOnCamera(camera.id)"
         >
           <v-img :src="camera.thumbnail_url" />
         </v-list-item>
