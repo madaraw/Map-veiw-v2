@@ -19,7 +19,7 @@
         </div>
       </v-list>
       <v-list>
-        <v-list-item
+        <div
           class="padding-tile"
           v-for="camera in offlineCamerasSide"
           :key="camera.id"
@@ -27,7 +27,7 @@
           @mouseleave="unfocusOnCamera(camera.id)"
         >
           <v-img :src="camera.thumbnail_url" />
-        </v-list-item>
+        </div>
       </v-list>
     </v-navigation-drawer>
     <GMap ref="mapComponent" v-if="onlineCameras.length" :onlineCameras="onlineCameras" :offlineCameras="offlineCameras" />
