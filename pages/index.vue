@@ -51,10 +51,9 @@
 
 <script>
 import GMap from "../components/GMap.vue";
-import liveView from "../components/liveView.vue";
 
 export default {
-  components: { GMap, liveView },
+  components: { GMap },
   data() {
     return {
       dialog: false,
