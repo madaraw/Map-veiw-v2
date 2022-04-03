@@ -30,15 +30,25 @@
         </div>
       </v-list>
     </v-navigation-drawer>
-    <GMap ref="mapComponent" v-if="onlineCameras.length" :onlineCameras="onlineCameras" :offlineCameras="offlineCameras" />
+    <GMap
+      ref="mapComponent"
+      v-if="onlineCameras.length"
+      :onlineCameras="onlineCameras"
+      :offlineCameras="offlineCameras"
+    />
   </v-main>
 </template>
 
 <script>
-import GMap from "../components/GMap.vue"
+import GMap from "../components/GMap.vue";
 
 export default {
-  components: {GMap},
+  components: { GMap },
+  data() {
+    return {
+      dialog: false,
+    };
+  },
   computed: {
     onlineCamerasSide() {
       return this.$store.getters["cameras/GET_SHOWING_ONLINE_CAMS"];
@@ -53,29 +63,33 @@ export default {
       return this.$store.getters["cameras/GET_OFFLINE_CAMS"];
     },
   },
-  methods:{
-    focusOnCamera(id){
-      this.$refs.mapComponent.focusOnMarker(id)
+  methods: {
+    focusOnCamera(id) {
+      this.$refs.mapComponent.focusOnMarker(id);
     },
-    unfocusOnCamera(id){
-      this.$refs.mapComponent.outOfMarker(id)
+    unfocusOnCamera(id) {
+      this.$refs.mapComponent.outOfMarker(id);
     },
   },
-  mounted() {
-  },
+  mounted() {},
 
   beforeCreate() {
     this.$store.dispatch("cameras/FETCH_CAMERAS");
-    this.$store.dispatch("cameras/FETCH_CAMERAS_KEY");
   },
 };
 </script>
 
 <style>
-.padding-tile{
+.padding-tile {
   padding: 2px 4px;
 }
-.padding-tile:hover{
+.padding-tile:hover {
   padding: 4px 8px;
+}
+.frame {
+  height: 100vh;
+}
+.v-dialog--fullscreen {
+  width: 100vw !important;
 }
 </style>

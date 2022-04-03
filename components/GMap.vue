@@ -13,6 +13,7 @@ export default {
       map: null,
       onlineMarkers: [],
       offlineMarkers: [],
+      clusters: [],
     };
   },
   methods: {
@@ -44,12 +45,24 @@ export default {
               width: 38,
               height: 21,
             },
+            scaledSize: { width: 57, height: 31.5 },
           });
           marker.setZIndex(marker.getZIndex() - (cameras.length * 2 + 1));
         });
         markers.push(marker);
       }
       return markers;
+    },
+    findCluster(camera) {
+      let foundCluster = null;
+      this.clusters.clusters.forEach((cluster) => {
+        cluster.markers.forEach((marker) => {
+          if (marker.camera.id == camera.id) {
+            foundCluster = cluster;
+          }
+        });
+      });
+      return foundCluster;
     },
     findMarker(id) {
       let markerFound = null;
@@ -72,6 +85,8 @@ export default {
     },
     focusOnMarker: function (id) {
       let marker = this.findMarker(id);
+      let cluster = this.findCluster(marker.camera);
+      // bigger marker on hover
       marker.setIcon({
         url: marker.getIcon().url,
         size: { width: 57, height: 31.5 },
@@ -83,10 +98,22 @@ export default {
           this.offlineCameras.length +
           1
       );
+      // Bigger cluster on hover
+      cluster.marker.setIcon({
+        url: marker.camera.thumbnail_url,
+        size: { width: 76, height: 42 },
+        scaledSize: { width: 76, height: 42 },
+        labelOrigin: new google.maps.Point(74, 0),
+      });
+      cluster.marker.setZIndex(
+        cluster.marker.getZIndex() + google.maps.Marker.MAX_ZINDEX
+      );
       this.map.panTo(marker.camera.location);
     },
     outOfMarker: function (id) {
       let marker = this.findMarker(id);
+      let cluster = this.findCluster(marker.camera);
+      // Out of marker action
       marker.setIcon({
         url: marker.getIcon().url,
         size: {
@@ -102,16 +129,25 @@ export default {
         marker.getZIndex() -
           (this.onlineCameras.length + this.offlineCameras.length + 1)
       );
+      // Out of cluster action
+      cluster.marker.setIcon({
+        url: cluster.marker.getIcon().url,
+        size: { width: 57, height: 31.5 },
+        scaledSize: { width: 57, height: 31.5 },
+        labelOrigin: new google.maps.Point(55, 0),
+      });
+      cluster.marker.setZIndex(
+        cluster.marker.getZIndex() - google.maps.Marker.MAX_ZINDEX
+      );
     },
   },
   mounted() {
     let center = { lat: 53.3498, lng: -6.2603 };
     let clusterer = null;
-
     // Embedding the map
     this.map = new this.$google.maps.Map(this.$refs.map, {
       zoom: 6,
-      center: center,
+      center,
       disableDefaultUI: true,
     });
 
@@ -141,7 +177,7 @@ export default {
       thumbIcon
     );
 
-    clusterer = new MarkerClusterer({
+    this.clusters = new MarkerClusterer({
       map: this.map,
       markers: [...this.onlineMarkers, ...this.offlineMarkers],
       renderer: {
@@ -158,10 +194,9 @@ export default {
             thumbnailUrl = cluster.markers[0].camera.thumbnail_url;
 
           // Setting the class
-          let labelStyling = 'roundUnderTen'
-          if(cluster.count >= 10)
-            labelStyling = "roundOverTen"
-          
+          let labelStyling = "roundUnderTen";
+          if (cluster.count >= 10) labelStyling = "roundOverTen";
+
           // Creating the marker using the thumbnail
           const singlecluster = new google.maps.Marker({
             position: cluster.position,
@@ -169,7 +204,7 @@ export default {
               url: thumbnailUrl,
               size: { width: 57, height: 31.5 },
               scaledSize: { width: 57, height: 31.5 },
-              labelOrigin: new google.maps.Point(55,0),
+              labelOrigin: new google.maps.Point(55, 0),
             },
             label: {
               text: String(cluster.count),
@@ -206,30 +241,27 @@ export default {
               url: singlecluster.getIcon().url,
               size: { width: 76, height: 42 },
               scaledSize: { width: 76, height: 42 },
-              labelOrigin: new google.maps.Point(74,0),
+              labelOrigin: new google.maps.Point(74, 0),
             });
             singlecluster.setZIndex(
-              singlecluster.getZIndex() +
-                (google.maps.Marker.MAX_ZINDEX)
+              singlecluster.getZIndex() + google.maps.Marker.MAX_ZINDEX
             );
           });
 
           // Closing the window when the mouse is out
           singlecluster.addListener("mouseout", () => {
             infowindow.close();
-            // Back to normal when out
+            // Back to normal size when out of cluster"
             singlecluster.setIcon({
               url: singlecluster.getIcon().url,
               size: { width: 57, height: 31.5 },
               scaledSize: { width: 57, height: 31.5 },
-              labelOrigin: new google.maps.Point(55,0),
+              labelOrigin: new google.maps.Point(55, 0),
             });
             singlecluster.setZIndex(
-              singlecluster.getZIndex() -
-                (google.maps.Marker.MAX_ZINDEX)
+              singlecluster.getZIndex() - google.maps.Marker.MAX_ZINDEX
             );
           });
-
           // Pushing the cluster to the map
           return singlecluster;
         },
@@ -243,12 +275,12 @@ export default {
 .map {
   height: 100vh;
 }
-.roundUnderTen{
+.roundUnderTen {
   background-color: #1976d2;
   padding: 4px 8px;
   border-radius: 50%;
 }
-.roundOverTen{
+.roundOverTen {
   background-color: #1976d2;
   padding: 5px;
   border-radius: 50%;
