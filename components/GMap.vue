@@ -49,6 +49,9 @@ export default {
           });
           marker.setZIndex(marker.getZIndex() - (cameras.length * 2 + 1));
         });
+        marker.addListener("click", () => {
+          this.$emit('click-on-marker',marker.camera.id)
+        });
         markers.push(marker);
       }
       return markers;

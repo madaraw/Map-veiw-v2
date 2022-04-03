@@ -79,6 +79,8 @@ export default {
   build: {
   },
   env: {
-    GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY
+    GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY,
+    API_ID: process.env.API_ID,
+    API_KEY: process.env.API_KEY,
   }
 }

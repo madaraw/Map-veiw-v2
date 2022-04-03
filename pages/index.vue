@@ -14,6 +14,7 @@
           :key="camera.id"
           @mouseenter="focusOnCamera(camera.id)"
           @mouseleave="unfocusOnCamera(camera.id)"
+          @click="clickOnCamera(camera.id)"
         >
           <v-img :src="camera.thumbnail_url" />
         </div>
@@ -25,28 +26,41 @@
           :key="camera.id"
           @mouseenter="focusOnCamera(camera.id)"
           @mouseleave="unfocusOnCamera(camera.id)"
+          @click="clickOnCamera(camera.id)"
         >
           <v-img :src="camera.thumbnail_url" />
         </div>
       </v-list>
     </v-navigation-drawer>
+    <LiveView
+      v-if="liveView"
+      @exit-cam="exitCamera"
+      :dialog="dialog"
+      :cameraSrc="cameraSrc"
+      :cameraDivId="cameraDivId"
+    />
     <GMap
       ref="mapComponent"
       v-if="onlineCameras.length"
       :onlineCameras="onlineCameras"
       :offlineCameras="offlineCameras"
+      @click-on-marker="clickOnCamera"
     />
   </v-main>
 </template>
 
 <script>
 import GMap from "../components/GMap.vue";
+import liveView from "../components/liveView.vue";
 
 export default {
-  components: { GMap },
+  components: { GMap, liveView },
   data() {
     return {
       dialog: false,
+      liveView: false,
+      cameraDivId: "",
+      cameraSrc: "",
     };
   },
   computed: {
@@ -70,8 +84,19 @@ export default {
     unfocusOnCamera(id) {
       this.$refs.mapComponent.outOfMarker(id);
     },
+    clickOnCamera(id) {
+      this.liveView = true;
+      this.cameraDivId = `ec-container-${id}`;
+      this.cameraSrc = `https://dash.evercam.io/live.view.widget.js?refresh=1&camera=${id}&private=true&api_id=${process.env.API_ID}&api_key=${process.env.API_KEY}&playpause=true&download=true&fullscreen=true&magnify=true`;
+      this.dialog = true;
+    },
+    exitCamera() {
+      this.cameraDivId = "";
+      this.cameraSrc = "";
+      this.dialog = false;
+      this.liveView = false;
+    },
   },
-  mounted() {},
 
   beforeCreate() {
     this.$store.dispatch("cameras/FETCH_CAMERAS");
@@ -85,6 +110,7 @@ export default {
 }
 .padding-tile:hover {
   padding: 4px 8px;
+  cursor: pointer;
 }
 .frame {
   height: 100vh;
