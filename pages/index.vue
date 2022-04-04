@@ -18,7 +18,7 @@
         ></v-text-field>
       </div>
       <div v-if="serverQuery" class="black--text px-2 text-body-2">
-        {{onlineCamerasSide.length + offlineCamerasSide.length }} cameras found
+        {{ onlineCamerasSide.length + offlineCamerasSide.length }} cameras found
       </div>
       <v-list>
         <div
@@ -33,7 +33,7 @@
           <v-img :src="camera.thumbnail_url" />
           <div
             class="white--text pa-0 ma-0 tile-name"
-            :id="'name-'+camera.id"
+            :id="'name-' + camera.id"
           >
             {{ camera.name }}
           </div>
@@ -100,23 +100,23 @@ export default {
     offlineCameras() {
       return this.$store.getters["cameras/GET_OFFLINE_CAMS"];
     },
-    serverQuery(){
+    serverQuery() {
       return this.$store.getters["cameras/GET_SEARCH_QUERY"];
     },
   },
-  watch:{
-    query(newQuery){
-      this.$store.commit("cameras/SEARCH",newQuery)
-    }
+  watch: {
+    query(newQuery) {
+      this.$store.commit("cameras/SEARCH", newQuery);
+    },
   },
   methods: {
     focusOnCamera(id) {
       this.$refs.mapComponent.focusOnMarker(id);
-      document.getElementById('name-'+id).classList.add('tile-name-hover')
+      document.getElementById("name-" + id).classList.add("tile-name-hover");
     },
     unfocusOnCamera(id) {
       this.$refs.mapComponent.outOfMarker(id);
-      document.getElementById('name-'+id).classList.remove('tile-name-hover')
+      document.getElementById("name-" + id).classList.remove("tile-name-hover");
     },
     clickOnCamera(id) {
       this.liveView = true;
@@ -133,9 +133,11 @@ export default {
     findMarkerThumbnail(id) {
       document.getElementById(id).scrollIntoView();
       document.getElementById(id).classList.add("padding-tile-hover");
+      document.getElementById("name-" + id).classList.add("tile-name-hover");
     },
     unfindMarkerThumbnail(id) {
       document.getElementById(id).classList.remove("padding-tile-hover");
+      document.getElementById("name-" + id).classList.remove("tile-name-hover");
     },
   },
 
@@ -155,9 +157,9 @@ export default {
   bottom: 3px;
   left: 10px;
 }
-.tile-name-hover{
+.tile-name-hover {
   bottom: 5px;
-  left: 15px;  
+  left: 15px;
 }
 .padding-tile:hover {
   padding: 4px 8px;
