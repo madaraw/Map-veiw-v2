@@ -33,6 +33,7 @@
           <v-img :src="camera.thumbnail_url" />
           <div
             class="white--text pa-0 ma-0 tile-name"
+            :id="'name-'+camera.id"
           >
             {{ camera.name }}
           </div>
@@ -111,9 +112,11 @@ export default {
   methods: {
     focusOnCamera(id) {
       this.$refs.mapComponent.focusOnMarker(id);
+      document.getElementById('name-'+id).classList.add('tile-name-hover')
     },
     unfocusOnCamera(id) {
       this.$refs.mapComponent.outOfMarker(id);
+      document.getElementById('name-'+id).classList.remove('tile-name-hover')
     },
     clickOnCamera(id) {
       this.liveView = true;
@@ -151,6 +154,10 @@ export default {
   position: absolute;
   bottom: 3px;
   left: 10px;
+}
+.tile-name-hover{
+  bottom: 5px;
+  left: 15px;  
 }
 .padding-tile:hover {
   padding: 4px 8px;
