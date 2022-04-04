@@ -33,24 +33,26 @@ export default {
         marker.addListener("mouseover", () => {
           marker.setIcon({
             url: marker.getIcon().url,
-            size: { width: 57, height: 31.5 },
-            scaledSize: { width: 57, height: 31.5 },
+            size: { width: 76, height: 42 },
+            scaledSize: { width: 76, height: 42 },
           });
           marker.setZIndex(marker.getZIndex() + (cameras.length * 2 + 1));
+          this.$emit('hover-over-marker',marker.camera.id)
         });
         marker.addListener("mouseout", () => {
           marker.setIcon({
             url: marker.getIcon().url,
             size: {
-              width: 38,
-              height: 21,
+              width: 57,
+              height: 31.5,
             },
             scaledSize: { width: 57, height: 31.5 },
           });
           marker.setZIndex(marker.getZIndex() - (cameras.length * 2 + 1));
+          this.$emit('out-of-marker',marker.camera.id)
         });
         marker.addListener("click", () => {
-          this.$emit('click-on-marker',marker.camera.id)
+          this.$emit("click-on-marker", marker.camera.id);
         });
         markers.push(marker);
       }
@@ -92,8 +94,8 @@ export default {
       // bigger marker on hover
       marker.setIcon({
         url: marker.getIcon().url,
-        size: { width: 57, height: 31.5 },
-        scaledSize: { width: 57, height: 31.5 },
+        size: { width: 76, height: 42 },
+        scaledSize: { width: 76, height: 42 },
       });
       marker.setZIndex(
         marker.getZIndex() +
@@ -119,14 +121,8 @@ export default {
       // Out of marker action
       marker.setIcon({
         url: marker.getIcon().url,
-        size: {
-          width: 38,
-          height: 21,
-        },
-        scaledSize: {
-          width: 38,
-          height: 21,
-        },
+        size: { width: 57, height: 31.5 },
+        scaledSize: { width: 57, height: 31.5 },
       });
       marker.setZIndex(
         marker.getZIndex() -
@@ -157,12 +153,12 @@ export default {
     let thumbIcon = {
       url: "",
       size: {
-        width: 38,
-        height: 21,
+        width: 57,
+        height: 31.5,
       },
       scaledSize: {
-        width: 38,
-        height: 21,
+        width: 57,
+        height: 31.5,
       },
     };
 
@@ -220,10 +216,13 @@ export default {
             zIndex: Number(google.maps.Marker.MAX_ZINDEX) + cluster.count,
           });
           // Creating the content for the info window
-          let content = "<div class='black--text'><ul>";
+          let content =
+            "<div class='black--text'><ul class='ma-0 pa-0' style='list-style-type: none;'>";
           for (let i = 0; i < cluster.markers.length; i++) {
             content +=
-              "<li><h3>" + cluster.markers[i].camera.name + "</h3></li>";
+              "<li><h3 class='text-subtitle-2'>" +
+              cluster.markers[i].camera.name +
+              "</h3></li>";
           }
           content += "</ul></div>";
 
