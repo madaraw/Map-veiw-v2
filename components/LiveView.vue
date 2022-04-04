@@ -1,10 +1,11 @@
 <template>
-  <v-dialog v-model="dialog" persistent fullscreen>
+  <v-dialog v-model="dialog" persistent style="height: 100vh;">
     <div>
-      <v-btn @click="exitCam" id="exit-button" elevation="2">Exit</v-btn>
+      <v-btn @click="exitCam" fab light x-small class="text-subtitle-2" id="exit-button" elevation="6">X</v-btn>
     </div>
-    <div class="frame">
-      <div :id="cameraDivId" style="width: 100%; position: relative"></div>
+    <div>
+      <div :id="cameraDivId" style="width: 100%; position: relative">
+      </div>
     </div>
     <script :src="cameraSrc" async></script>
   </v-dialog>
@@ -25,8 +26,11 @@ export default {
 <style>
 #exit-button {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 8px;
+  right: 8px;
   z-index: 100;
+}
+.v-dialog--fullscreen {
+  width: 100vw !important;
 }
 </style>
