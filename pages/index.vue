@@ -20,7 +20,7 @@
       <div v-if="serverQuery" class="black--text px-2 text-body-2">
         {{ onlineCamerasSide.length + offlineCamerasSide.length }} cameras found
       </div>
-      <v-list>
+      <v-list v-if="onlineCamerasSide || offlineCamerasSide">
         <div
           class="padding-tile"
           v-for="camera in onlineCamerasSide"
@@ -50,7 +50,12 @@
           @click="clickOnCamera(camera.id)"
         >
           <v-img :src="camera.thumbnail_url" />
-          <div class="white--text pa-0 ma-0 tile-name">{{ camera.name }}</div>
+          <div
+            class="white--text pa-0 ma-0 tile-name"
+            :id="'name-' + camera.id"
+          >
+            {{ camera.name }}
+          </div>
         </div>
       </v-list>
     </v-navigation-drawer>
@@ -60,6 +65,8 @@
       :dialog="dialog"
       :cameraSrc="cameraSrc"
       :cameraDivId="cameraDivId"
+      :thumbnail="thumbnail"
+      :status="status"
     />
     <GMap
       ref="mapComponent"
@@ -85,6 +92,8 @@ export default {
       cameraDivId: "",
       cameraSrc: "",
       query: "",
+      thumbnail: "",
+      status: "",
     };
   },
   computed: {
@@ -118,10 +127,24 @@ export default {
       this.$refs.mapComponent.outOfMarker(id);
       document.getElementById("name-" + id).classList.remove("tile-name-hover");
     },
+    findCamera(id) {
+      let cam = null;
+      this.onlineCameras.forEach((camera) => {
+        if (camera.id == id) cam = camera;
+      });
+      this.offlineCameras.forEach((camera) => {
+        if (camera.id == id) cam = camera;
+      });
+      return cam;
+    },
     clickOnCamera(id) {
+      let cam = this.findCamera(id);
+      console.log(cam);
       this.liveView = true;
       this.cameraDivId = `ec-container-${id}`;
       this.cameraSrc = `https://dash.evercam.io/live.view.widget.js?refresh=1&camera=${id}&private=true&api_id=${process.env.API_ID}&api_key=${process.env.API_KEY}&playpause=true&download=true&fullscreen=true&magnify=true`;
+      this.thumbnail = cam.thumbnail_url;
+      this.status = cam.status;
       this.dialog = true;
     },
     exitCamera() {
