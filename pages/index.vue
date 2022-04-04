@@ -7,28 +7,49 @@
       app
       permanent
     >
+      <div class="px-2 ma-0">
+        <v-text-field
+          v-model="query"
+          placeholder="Search..."
+          class="rounded ma-0"
+          light
+          background-color="white"
+          append-icon="mdi-magnify"
+        ></v-text-field>
+      </div>
+      <div v-if="serverQuery" class="black--text px-2 text-body-2">
+        {{onlineCamerasSide.length + offlineCamerasSide.length }} cameras found
+      </div>
       <v-list>
         <div
           class="padding-tile"
           v-for="camera in onlineCamerasSide"
+          :id="camera.id"
           :key="camera.id"
           @mouseenter="focusOnCamera(camera.id)"
           @mouseleave="unfocusOnCamera(camera.id)"
           @click="clickOnCamera(camera.id)"
         >
           <v-img :src="camera.thumbnail_url" />
+          <div
+            class="white--text pa-0 ma-0 tile-name"
+          >
+            {{ camera.name }}
+          </div>
         </div>
       </v-list>
       <v-list>
         <div
           class="padding-tile"
           v-for="camera in offlineCamerasSide"
+          :id="camera.id"
           :key="camera.id"
           @mouseenter="focusOnCamera(camera.id)"
           @mouseleave="unfocusOnCamera(camera.id)"
           @click="clickOnCamera(camera.id)"
         >
           <v-img :src="camera.thumbnail_url" />
+          <div class="white--text pa-0 ma-0 tile-name">{{ camera.name }}</div>
         </div>
       </v-list>
     </v-navigation-drawer>
@@ -45,6 +66,8 @@
       :onlineCameras="onlineCameras"
       :offlineCameras="offlineCameras"
       @click-on-marker="clickOnCamera"
+      @hover-over-marker="findMarkerThumbnail"
+      @out-of-marker="unfindMarkerThumbnail"
     />
   </v-main>
 </template>
@@ -60,6 +83,7 @@ export default {
       liveView: false,
       cameraDivId: "",
       cameraSrc: "",
+      query: "",
     };
   },
   computed: {
@@ -75,6 +99,14 @@ export default {
     offlineCameras() {
       return this.$store.getters["cameras/GET_OFFLINE_CAMS"];
     },
+    serverQuery(){
+      return this.$store.getters["cameras/GET_SEARCH_QUERY"];
+    },
+  },
+  watch:{
+    query(newQuery){
+      this.$store.commit("cameras/SEARCH",newQuery)
+    }
   },
   methods: {
     focusOnCamera(id) {
@@ -95,6 +127,13 @@ export default {
       this.dialog = false;
       this.liveView = false;
     },
+    findMarkerThumbnail(id) {
+      document.getElementById(id).scrollIntoView();
+      document.getElementById(id).classList.add("padding-tile-hover");
+    },
+    unfindMarkerThumbnail(id) {
+      document.getElementById(id).classList.remove("padding-tile-hover");
+    },
   },
 
   beforeCreate() {
@@ -105,16 +144,19 @@ export default {
 
 <style>
 .padding-tile {
+  position: relative;
   padding: 2px 4px;
+}
+.tile-name {
+  position: absolute;
+  bottom: 3px;
+  left: 10px;
 }
 .padding-tile:hover {
   padding: 4px 8px;
   cursor: pointer;
 }
-.frame {
-  height: 100vh;
-}
-.v-dialog--fullscreen {
-  width: 100vw !important;
+.padding-tile-hover {
+  padding: 4px 8px;
 }
 </style>
